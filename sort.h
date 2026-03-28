@@ -158,7 +158,7 @@ int partition(T arr[], int l, int h, C comp) {
 template <typename T, typename C>
 void quickSort(T arr[], int low, int high, C comp) {
     if (low < high) {
-        T pivot = partition(arr, low, high, comp);
+        int pivot = partition(arr, low, high, comp);
         quickSort(arr, low, pivot - 1, comp);
         quickSort(arr, pivot + 1, high, comp);
     }
