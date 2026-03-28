@@ -150,8 +150,9 @@ int partition(T arr[], int l, int h, C comp) {
         if (up < down) {
             swap(&arr[up], &arr[down]);
         }
-        return down;
     }
+    swap(&arr[l], &arr[down]);
+    return down;
 }
 
 template <typename T, typename C>
