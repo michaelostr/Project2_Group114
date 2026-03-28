@@ -2,6 +2,7 @@
 // Created by Luke Dunham on 3/24/2026.
 //
 #include <iostream>
+#include <utility>
 #include "HealthRecord.h"
 using namespace std;
 
@@ -129,38 +130,41 @@ void swap(T *a, T *b) {
     *b = temp;
 }
 
+
 template <typename T, typename C>
-int partition(T arr[], int l, int h, C comp) {
+std::pair<int,int> partition3(T arr[], int l, int h, C comp) {
+    // Median-of-three: compare first, middle, last and put median in arr[l]
+    int mid = l + (h - l) / 2;
+    if (comp(arr[mid], arr[l])) swap(&arr[mid], &arr[l]);
+    if (comp(arr[h],   arr[l])) swap(&arr[h],   &arr[l]);
+    if (comp(arr[mid], arr[l])) swap(&arr[mid], &arr[l]);
+    // arr[l] is now the median of the three
+
     T pivot = arr[l];
-    int up = l;
-    int down = h;
-    while (up < down) {
-        for (int i = up; i < h; i++) {
-            if (comp(pivot, arr[i])) {
-                break;
-            }
-            up++;
-        }
-        for (int j = down; j > l; j--) {
-            if (comp(arr[j], pivot)) {
-                break;
-            }
-            down--;
-        }
-        if (up < down) {
-            swap(&arr[up], &arr[down]);
+    int lt = l;
+    int gt = h;
+    int i  = l + 1;
+    while (i <= gt) {
+        if (comp(arr[i], pivot)) {
+            swap(&arr[i], &arr[lt]);
+            lt++;
+            i++;
+        } else if (comp(pivot, arr[i])) {
+            swap(&arr[i], &arr[gt]);
+            gt--;
+        } else {
+            i++;
         }
     }
-    swap(&arr[l], &arr[down]);
-    return down;
+    return {lt, gt};
 }
 
 template <typename T, typename C>
 void quickSort(T arr[], int low, int high, C comp) {
     if (low < high) {
-        int pivot = partition(arr, low, high, comp);
-        quickSort(arr, low, pivot - 1, comp);
-        quickSort(arr, pivot + 1, high, comp);
+        auto [lt, gt] = partition3(arr, low, high, comp);
+        quickSort(arr, low, lt - 1, comp);
+        quickSort(arr, gt + 1, high, comp);
     }
 }
 
